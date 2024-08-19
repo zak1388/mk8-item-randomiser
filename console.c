@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "console.h"
 
 struct ItemNode *head = NULL;
@@ -68,7 +69,10 @@ int main(void) {
     RegisterItem("Bullet Bill");
     RegisterItem("Super Horn");
     RegisterItem("8");
+
+    srand(time(NULL));
     RandomAllocateAllItems();
+    
     PrintItems();
 }
 

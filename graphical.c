@@ -30,9 +30,30 @@ void RegisterItems() {
     RegisterItem("8");
 }
 
+void updateButtonClass(struct ItemButton *itemButton) {
+    char* colorClass[2];
+    colorClass[1] = NULL;
+    switch (itemButton->item->team_allocation) {
+        case None:
+            colorClass[0] = "None";
+            break;
+        case Red:
+            colorClass[0] = "Red";
+            break;
+        case Blue:
+            colorClass[0] = "Blue";
+            break;
+        case Both:
+            colorClass[0] = "Both";
+            break;
+    }
+    gtk_widget_set_css_classes((GtkWidget*) itemButton->button, (const char**) colorClass);
+}
+
 void cycleItemTeamAllocation(GtkWidget *button, gpointer data) {
-    struct Item *item = data;
-    item->team_allocation = (item->team_allocation + 1) % 4; // we love magic numbers
+    struct ItemButton *itemButton = data;
+    itemButton->item->team_allocation = (itemButton->item->team_allocation + 1) % 4; // we love magic numbers
+    updateButtonClass(itemButton);
 }
 
 struct ItemButton* createItemButtons() {
@@ -42,7 +63,8 @@ struct ItemButton* createItemButtons() {
     for (int i = 0; i < itemCount && node != NULL; i++, node=node->next) {
         itemButtons[i].button = (GtkButton*) gtk_button_new_with_label(node->item->name);
         itemButtons[i].item = node->item;
-        g_signal_connect(itemButtons[i].button, "clicked", G_CALLBACK(cycleItemTeamAllocation), itemButtons[i].item);
+        updateButtonClass(&itemButtons[i]);
+        g_signal_connect(itemButtons[i].button, "clicked", G_CALLBACK(cycleItemTeamAllocation), &itemButtons[i]);
     } 
     return itemButtons;
 }
@@ -51,23 +73,7 @@ void reallocateItems(GtkWidget *widget, gpointer data) {
     RandomAllocateAllItems();
     struct ItemButton *itemButtons = data;
     for (int i = 0; i < GetItemCount(); i++) {
-        char* color[2];
-        color[1] = NULL;
-        switch (itemButtons[i].item->team_allocation) {
-            case None:
-                color[0] = "None";
-                break;
-            case Red:
-                color[0] = "Red";
-                break;
-            case Blue:
-                color[0] = "Blue";
-                break;
-            case Both:
-                color[0] = "Both";
-                break;
-        }
-        gtk_widget_set_css_classes((GtkWidget*) itemButtons[i].button, (const char**) color);
+        updateButtonClass(&itemButtons[i]);
     }
 }
 

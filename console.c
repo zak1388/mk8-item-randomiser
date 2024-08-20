@@ -1,38 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "console.h"
-
-struct ItemNode *head = NULL;
-
-void RegisterItem(char *name) {
-    struct Item* item = malloc(sizeof(struct Item));
-    item->name = name;
-    item->team_allocation = None;
-
-    struct ItemNode* node = malloc(sizeof(struct ItemNode));
-    node->item = item;
-    node->next = NULL;
-
-    if (head == NULL) {
-        head = node;
-    } else {
-        struct ItemNode* lastNode = head;
-        while (lastNode->next != NULL) lastNode = lastNode->next;
-        lastNode->next = node;
-    }
-}
-
-void RandomAllocateAllItems() {
-    struct ItemNode* node = head;
-    while (node != NULL) {
-        node->item->team_allocation = rand() % 4;
-        node = node->next;
-    }
-}
+#include "items.h"
 
 void PrintItems() {
-    struct ItemNode* node = head;
+    struct ItemNode* node = getItemListHead();
     while (node != NULL) {
         char *allocation;
         switch (node->item->team_allocation) {
@@ -45,6 +19,7 @@ void PrintItems() {
         node = node->next;
     }
 }
+
 
 int main(void) {
     RegisterItem("Coin");

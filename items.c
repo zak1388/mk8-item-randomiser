@@ -4,6 +4,7 @@
 #include "items.h"
 
 struct ItemNode *head = NULL;
+int LIKELIHOOD = 50;
 
 void RegisterAllItems() {
     RegisterItem("Banana");
@@ -61,9 +62,24 @@ int GetItemCount() {
 void RandomAllocateAllItems() {
     struct ItemNode* node = head;
     while (node != NULL) {
-        node->item->team_allocation = rand() % 4;
+        if (rand() % 100 < GetItemLikelihood() ) {
+            node->item->team_allocation = rand() % 3 + 1;
+        } else {
+            node->item->team_allocation = ETeamAllocation_None;
+        }
         node = node->next;
     }
+}
+
+void SetItemLikelihood(int likelihood) {
+    if (likelihood > 100) likelihood = 100;
+    else if (likelihood < 0) likelihood = 0;
+
+    LIKELIHOOD = likelihood;
+}
+
+int GetItemLikelihood() {
+    return LIKELIHOOD;
 }
 
 void DeregisterAllItems() {

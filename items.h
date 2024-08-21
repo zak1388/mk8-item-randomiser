@@ -24,6 +24,8 @@ void DeregisterAllItems();
 int GetItemCount();
 
 void RandomAllocateAllItems();
+void SetItemLikelihood(int likelihood); // likelyhood ranges from 0-100
+int GetItemLikelihood();
 
 struct ItemNode* getItemListHead();
 

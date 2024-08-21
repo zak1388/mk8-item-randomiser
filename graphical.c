@@ -52,12 +52,22 @@ void reallocateItems(GtkWidget *widget, gpointer data) {
     }
 }
 
+void itemLikelihoodSliderUpdate(GtkWidget *widget, gpointer data) {
+    int likely = gtk_range_get_value((GtkRange *) widget);
+    SetItemLikelihood(likely); 
+
+    char value_str[4];
+    snprintf(value_str, 4, "%d", likely);
+    gtk_label_set_text((GtkLabel*) data, value_str);
+}
+
 static void activate (GtkApplication* app, gpointer user_data)
 {
     GtkWidget *window;
     struct ItemButton *itemButtons;
     GtkWidget *itemScrollWindow;
     GtkWidget *itemButtonBox;
+    GtkWidget *itemLikelihoodSlider;
     GtkWidget *reallocateButton;
     GtkWidget *grid;
 
@@ -89,12 +99,26 @@ static void activate (GtkApplication* app, gpointer user_data)
     itemScrollWindow = gtk_scrolled_window_new();
     gtk_scrolled_window_set_child((GtkScrolledWindow*) itemScrollWindow, itemButtonBox);
 
+    GtkWidget *likelihoodBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    GtkWidget *likelihoodLabel = gtk_label_new("Item likelihood: ");
+    char value_str[3];
+    snprintf(value_str, 3, "%d", GetItemLikelihood());
+    GtkWidget *likelihoodValueLabel = gtk_label_new(value_str);
+    itemLikelihoodSlider = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 100, 1);
+    gtk_range_set_value((GtkRange*) itemLikelihoodSlider, GetItemLikelihood());
+    g_signal_connect(itemLikelihoodSlider, "value-changed", G_CALLBACK(itemLikelihoodSliderUpdate), likelihoodValueLabel);
+    gtk_box_append((GtkBox*) likelihoodBox, likelihoodLabel);
+    gtk_box_append((GtkBox*) likelihoodBox, itemLikelihoodSlider);
+    gtk_widget_set_hexpand(itemLikelihoodSlider, TRUE);
+    gtk_box_append((GtkBox*) likelihoodBox, likelihoodValueLabel);
+
     reallocateButton = gtk_button_new_with_label("Reallocate");
     g_signal_connect(reallocateButton, "clicked", G_CALLBACK(reallocateItems), itemButtons);
 
     grid = gtk_grid_new();
     gtk_grid_attach((GtkGrid*) grid, itemScrollWindow, 0, 0, 3, 1);
-    gtk_grid_attach((GtkGrid*) grid, reallocateButton, 1, 1, 1, 1);
+    gtk_grid_attach((GtkGrid*) grid, likelihoodBox, 0, 1, 3, 1);
+    gtk_grid_attach((GtkGrid*) grid, reallocateButton, 1, 2, 1, 1);
 
     gtk_window_set_child(GTK_WINDOW(window), grid);
     gtk_window_present (GTK_WINDOW (window));

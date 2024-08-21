@@ -22,28 +22,7 @@ void PrintItems() {
 
 
 int main(void) {
-    RegisterItem("Coin");
-    RegisterItem("Blooper");
-    RegisterItem("Bob-omb");
-    RegisterItem("Piranha Plant");
-    RegisterItem("Banana");
-    RegisterItem("Triple Bananas");
-    RegisterItem("Boo");
-    RegisterItem("Green Shell");
-    RegisterItem("Triple Green Shells");
-    RegisterItem("Fire Flower");
-    RegisterItem("Mushroom");
-    RegisterItem("Triple Mushrooms");
-    RegisterItem("Red Shell");
-    RegisterItem("Triple Red Shells");
-    RegisterItem("Boomerang");
-    RegisterItem("King Mushroom");
-    RegisterItem("Star");
-    RegisterItem("Blue Shell");
-    RegisterItem("Lightning");
-    RegisterItem("Bullet Bill");
-    RegisterItem("Super Horn");
-    RegisterItem("8");
+    RegisterAllItems();
 
     srand(time(NULL));
     RandomAllocateAllItems();

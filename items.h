@@ -18,6 +18,7 @@ struct ItemNode {
     struct ItemNode* next;
 };
 
+void RegisterAllItems();
 void RegisterItem(char *name);
 void DeregisterAllItems();
 int GetItemCount();

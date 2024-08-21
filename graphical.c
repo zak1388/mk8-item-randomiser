@@ -5,31 +5,6 @@
 #include "items.h"
 #include "graphical.h"
 
-void RegisterItems() {
-    RegisterItem("Coin");
-    RegisterItem("Blooper");
-    RegisterItem("Bob-omb");
-    RegisterItem("Piranha Plant");
-    RegisterItem("Banana");
-    RegisterItem("Triple Bananas");
-    RegisterItem("Boo");
-    RegisterItem("Green Shell");
-    RegisterItem("Triple Green Shells");
-    RegisterItem("Fire Flower");
-    RegisterItem("Mushroom");
-    RegisterItem("Triple Mushrooms");
-    RegisterItem("Red Shell");
-    RegisterItem("Triple Red Shells");
-    RegisterItem("Boomerang");
-    RegisterItem("King Mushroom");
-    RegisterItem("Star");
-    RegisterItem("Blue Shell");
-    RegisterItem("Lightning");
-    RegisterItem("Bullet Bill");
-    RegisterItem("Super Horn");
-    RegisterItem("8");
-}
-
 void updateButtonClass(struct ItemButton *itemButton) {
     char* colorClass[2];
     colorClass[1] = NULL;
@@ -99,7 +74,7 @@ static void activate (GtkApplication* app, gpointer user_data)
     gtk_window_set_title (GTK_WINDOW (window), "Mario Kart 8 -- Item randomiser");
     gtk_window_set_default_size (GTK_WINDOW (window), 600, 500);
 
-    RegisterItems();
+    RegisterAllItems();
     itemButtons = createItemButtons();
 
     GtkSizeGroup *group = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);

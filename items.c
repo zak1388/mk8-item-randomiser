@@ -5,6 +5,31 @@
 
 struct ItemNode *head = NULL;
 
+void RegisterAllItems() {
+    RegisterItem("Banana");
+    RegisterItem("Triple Bananas");
+    RegisterItem("Green Shell");
+    RegisterItem("Triple Green Shells");
+    RegisterItem("Red Shell");
+    RegisterItem("Triple Red Shells");
+    RegisterItem("Blue Shell");
+    RegisterItem("Bob-omb");
+    RegisterItem("Mushroom");
+    RegisterItem("Triple Mushrooms");
+    RegisterItem("King Mushroom");
+    RegisterItem("Bullet Bill");
+    RegisterItem("Blooper");
+    RegisterItem("Lightning");
+    RegisterItem("Star");
+    RegisterItem("Fire Flower");
+    RegisterItem("Boomerang");
+    RegisterItem("Piranha Plant");
+    RegisterItem("Super Horn");
+    RegisterItem("8");
+    RegisterItem("Coin");
+    RegisterItem("Boo");
+}
+
 void RegisterItem(char *name) {
     struct Item* item = malloc(sizeof(struct Item));
     item->name = name;

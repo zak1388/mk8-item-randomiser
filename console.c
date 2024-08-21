@@ -10,10 +10,10 @@ void PrintItems() {
     while (node != NULL) {
         char *allocation;
         switch (node->item->team_allocation) {
-            case None: allocation = "None"; break;
-            case Red: allocation = "\033[31mRed\033[39m"; break;
-            case Blue: allocation = "\033[34mBlue\033[39m"; break;
-            case Both: allocation = "\033[31mBo\033[34mth\033[39m"; break;
+            case ETeamAllocation_None: allocation = "None"; break;
+            case ETeamAllocation_Red: allocation = "\033[31mRed\033[39m"; break;
+            case ETeamAllocation_Blue: allocation = "\033[34mBlue\033[39m"; break;
+            case ETeamAllocation_Both: allocation = "\033[31mBo\033[34mth\033[39m"; break;
         }
         printf("%s: %s\n", node->item->name, allocation);
         node = node->next;

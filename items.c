@@ -8,7 +8,7 @@ struct ItemNode *head = NULL;
 void RegisterItem(char *name) {
     struct Item* item = malloc(sizeof(struct Item));
     item->name = name;
-    item->team_allocation = None;
+    item->team_allocation = ETeamAllocation_None;
 
     struct ItemNode* node = malloc(sizeof(struct ItemNode));
     node->item = item;

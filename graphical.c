@@ -34,16 +34,16 @@ void updateButtonClass(struct ItemButton *itemButton) {
     char* colorClass[2];
     colorClass[1] = NULL;
     switch (itemButton->item->team_allocation) {
-        case None:
+        case ETeamAllocation_None:
             colorClass[0] = "None";
             break;
-        case Red:
+        case ETeamAllocation_Red:
             colorClass[0] = "Red";
             break;
-        case Blue:
+        case ETeamAllocation_Blue:
             colorClass[0] = "Blue";
             break;
-        case Both:
+        case ETeamAllocation_Both:
             colorClass[0] = "Both";
             break;
     }

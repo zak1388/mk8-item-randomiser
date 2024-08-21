@@ -2,10 +2,10 @@
 #define ITEM_H
 
 enum ETeamAllocation {
-    None,
-    Red,
-    Blue,
-    Both,
+    ETeamAllocation_None,
+    ETeamAllocation_Red,
+    ETeamAllocation_Blue,
+    ETeamAllocation_Both,
 };
 
 struct Item {

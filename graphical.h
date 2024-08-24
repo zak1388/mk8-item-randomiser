@@ -9,4 +9,9 @@ struct ItemButton {
     GtkButton *button;
 };
 
+struct ItemButtonsAndItemBox {
+    struct ItemButton **itemButtonsPtr;
+    GtkFlowBox *itemButtonBox;
+};
+
 #endif // GRAPHICAL_H

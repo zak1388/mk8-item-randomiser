@@ -5,6 +5,13 @@
 #include "items.h"
 #include "graphical.h"
 
+struct ItemButton* _itemButtons;
+GtkWidget *itemButtonBox;
+
+struct ItemButton* GetItemButtons() {
+    return _itemButtons;
+}
+
 void updateButtonClass(struct ItemButton *itemButton) {
     char* colorClass[2];
     colorClass[1] = NULL;
@@ -41,12 +48,47 @@ struct ItemButton* createItemButtons() {
         updateButtonClass(&itemButtons[i]);
         g_signal_connect(itemButtons[i].button, "clicked", G_CALLBACK(cycleItemTeamAllocation), &itemButtons[i]);
     } 
+    _itemButtons = itemButtons;
     return itemButtons;
+}
+
+void saveItemsDialogCallback(GObject *sourceObj, GAsyncResult *result, gpointer data) {
+    GFile *file = gtk_file_dialog_save_finish((GtkFileDialog*) sourceObj, result, NULL);
+    SaveItems(g_file_get_path(file));
+    free(file);
+}
+
+void saveItems(GtkWidget *widget, gpointer data) {
+    GtkFileDialog *dialog = gtk_file_dialog_new();
+    gtk_file_dialog_save(dialog, NULL, NULL, saveItemsDialogCallback, NULL); 
+}
+
+void itemButtonBoxPopulate() {
+    gtk_flow_box_remove_all((GtkFlowBox*) itemButtonBox);
+    struct ItemButton *itemButtons = GetItemButtons();
+    GtkSizeGroup *group = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
+    for (int i = 0; i < GetItemCount(); i++) {
+        gtk_size_group_add_widget(group, (GtkWidget*) itemButtons[i].button);
+        gtk_flow_box_insert((GtkFlowBox*) itemButtonBox, (GtkWidget*) itemButtons[i].button, i);
+    }
+}
+
+void loadItemsDialogCallback(GObject *sourceObj, GAsyncResult *result, gpointer data) {
+    GFile *file = gtk_file_dialog_open_finish((GtkFileDialog*) sourceObj, result, NULL);
+    LoadItems(g_file_get_path(file));
+    free(file);
+    createItemButtons();
+    itemButtonBoxPopulate();
+}
+
+void loadItems(GtkWidget *widget, gpointer data) {
+    GtkFileDialog *dialog = gtk_file_dialog_new();
+    gtk_file_dialog_open(dialog, NULL, NULL, loadItemsDialogCallback, data); 
 }
 
 void reallocateItems(GtkWidget *widget, gpointer data) {
     RandomAllocateAllItems();
-    struct ItemButton *itemButtons = data;
+    struct ItemButton *itemButtons = GetItemButtons();
     for (int i = 0; i < GetItemCount(); i++) {
         updateButtonClass(&itemButtons[i]);
     }
@@ -64,10 +106,9 @@ void itemLikelihoodSliderUpdate(GtkWidget *widget, gpointer data) {
 static void activate (GtkApplication* app, gpointer user_data)
 {
     GtkWidget *window;
-    struct ItemButton *itemButtons;
     GtkWidget *itemScrollWindow;
-    GtkWidget *itemButtonBox;
     GtkWidget *itemLikelihoodSlider;
+    GtkWidget *saveLoadBox;
     GtkWidget *reallocateButton;
     GtkWidget *grid;
 
@@ -85,16 +126,12 @@ static void activate (GtkApplication* app, gpointer user_data)
     gtk_window_set_default_size (GTK_WINDOW (window), 600, 500);
 
     RegisterAllItems();
-    itemButtons = createItemButtons();
+    createItemButtons();
 
-    GtkSizeGroup *group = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
     itemButtonBox = gtk_flow_box_new();
     gtk_widget_set_hexpand(itemButtonBox, TRUE);
     gtk_widget_set_vexpand(itemButtonBox, TRUE);
-    for (int i = 0; i < GetItemCount(); i++) {
-        gtk_size_group_add_widget(group, (GtkWidget*) itemButtons[i].button);
-        gtk_flow_box_insert((GtkFlowBox*) itemButtonBox, (GtkWidget*) itemButtons[i].button, i);
-    }
+    itemButtonBoxPopulate();
 
     itemScrollWindow = gtk_scrolled_window_new();
     gtk_scrolled_window_set_child((GtkScrolledWindow*) itemScrollWindow, itemButtonBox);
@@ -112,13 +149,22 @@ static void activate (GtkApplication* app, gpointer user_data)
     gtk_widget_set_hexpand(itemLikelihoodSlider, TRUE);
     gtk_box_append((GtkBox*) likelihoodBox, likelihoodValueLabel);
 
+    saveLoadBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    GtkWidget *saveButton = gtk_button_new_with_label("Save");
+    g_signal_connect(saveButton, "clicked", G_CALLBACK(saveItems), NULL);
+    GtkWidget *loadButton = gtk_button_new_with_label("Load");
+    g_signal_connect(loadButton, "clicked", G_CALLBACK(loadItems), NULL);
+    gtk_box_append((GtkBox*) saveLoadBox, saveButton);
+    gtk_box_append((GtkBox*) saveLoadBox, loadButton);
+
     reallocateButton = gtk_button_new_with_label("Reallocate");
-    g_signal_connect(reallocateButton, "clicked", G_CALLBACK(reallocateItems), itemButtons);
+    g_signal_connect(reallocateButton, "clicked", G_CALLBACK(reallocateItems), NULL);
 
     grid = gtk_grid_new();
     gtk_grid_attach((GtkGrid*) grid, itemScrollWindow, 0, 0, 3, 1);
     gtk_grid_attach((GtkGrid*) grid, likelihoodBox, 0, 1, 3, 1);
-    gtk_grid_attach((GtkGrid*) grid, reallocateButton, 1, 2, 1, 1);
+    gtk_grid_attach((GtkGrid*) grid, saveLoadBox, 0, 2, 3, 1);
+    gtk_grid_attach((GtkGrid*) grid, reallocateButton, 1, 3, 1, 1);
 
     gtk_window_set_child(GTK_WINDOW(window), grid);
     gtk_window_present (GTK_WINDOW (window));
